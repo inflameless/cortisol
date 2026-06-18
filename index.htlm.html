@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Morning Cortisol Map | Inflameless Living</title>
+<meta name="description" content="Find your top 2 cortisol spike moments before noon — and get one specific protocol swap for each. Free tool from Inflameless Living." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand-dark: #1a1a1a;
+    --brand-mid: #4a4a4a;
+    --brand-muted: #888;
+    --brand-border: rgba(0,0,0,0.1);
+    --brand-border-mid: rgba(0,0,0,0.18);
+    --spike-bg: #FEF0EB;
+    --spike-text: #8B3A1F;
+    --spike-border: #F0A080;
+    --recovery-bg: #E8F5EF;
+    --recovery-text: #0D6644;
+    --recovery-border: #5DCAA5;
+    --neutral-bg: #F2F1ED;
+    --neutral-text: #5a5954;
+    --neutral-border: #C0BEB7;
+    --purple-bg: #EEEDFE;
+    --purple-text: #3C3489;
+    --purple-border: #AFA9EC;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #FAF9F7;
+    color: var(--brand-dark);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    background: #fff;
+    border-bottom: 1px solid var(--brand-border);
+    padding: 1rem 1.5rem;
+    text-align: center;
+  }
+  .page-header .brand {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--brand-muted);
+    margin-bottom: 4px;
+  }
+  .page-header h1 {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 600;
+    color: var(--brand-dark);
+    line-height: 1.25;
+  }
+  .page-header .subtitle {
+    font-size: 15px;
+    color: var(--brand-mid);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ── TEACH BANNER ── */
+  .teach-banner {
+    background: var(--spike-bg);
+    border-bottom: 1px solid var(--spike-border);
+    padding: .85rem 1.5rem;
+    text-align: center;
+    font-size: 14px;
+    color: var(--spike-text);
+    line-height: 1.6;
+  }
+  .teach-banner strong { font-weight: 600; }
+
+  /* ── MAIN WRAPPER ── */
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* ── STEPPER ── */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.25rem;
+  }
+  .step-node {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .step-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--brand-border-mid);
+    background: #fff;
+    color: var(--brand-muted);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+  }
+  .step-circle.active { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple-border); }
+  .step-circle.done { background: var(--recovery-bg); color: var(--recovery-text); border-color: var(--recovery-border); }
+  .step-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--brand-muted);
+    white-space: nowrap;
+  }
+  .step-label.active { color: var(--purple-text); }
+  .step-label.done { color: var(--recovery-text); }
+  .step-line { flex: 1; height: 1px; background: var(--brand-border); margin: 0 8px; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--brand-dark);
+    margin-bottom: .5rem;
+  }
+  .section-sub {
+    font-size: 14px;
+    color: var(--brand-mid);
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid;
+  }
+  .badge-spike { background: var(--spike-bg); color: var(--spike-text); border-color: var(--spike-border); }
+  .badge-recovery { background: var(--recovery-bg); color: var(--recovery-text); border-color: var(--recovery-border); }
+  .badge-neutral { background: var(--neutral-bg); color: var(--neutral-text); border-color: var(--neutral-border); }
+
+  /* ── TIME ROWS ── */
+  .time-row {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--brand-border);
+  }
+  .time-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-muted);
+    padding-top: 9px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .row-right { display: flex; flex-direction: column; gap: 6px; }
+  .activity-input {
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 8px 12px;
+    border: 1px solid var(--brand-border-mid);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    color: var(--brand-dark);
+    width: 100%;
+    transition: border-color .15s;
+  }
+  .activity-input:focus { outline: none; border-color: #AFA9EC; }
+  .activity-input::placeholder { color: #bbb; }
+  .impact-sel { display: flex; gap: 6px; flex-wrap: wrap; }
+  .impact-btn {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--brand-border-mid);
+    background: #fff;
+    color: var(--brand-muted);
+    cursor: pointer;
+    transition: all .15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .impact-btn:hover { background: #f5f5f5; }
+  .impact-btn.spike.active { background: var(--spike-bg); color: var(--spike-text); border-color: var(--spike-border); }
+  .impact-btn.neutral.active { background: var(--neutral-bg); color: var(--neutral-text); border-color: var(--neutral-border); }
+  .impact-btn.recovery.active { background: var(--recovery-bg); color: var(--recovery-text); border-color: var(--recovery-border); }
+  .auto-tag {
+    font-size: 11px;
+    color: var(--brand-muted);
+    font-style: italic;
+    height: 14px;
+    transition: opacity .2s;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    margin-top: 1.75rem;
+    transition: background .15s, transform .1s;
+    letter-spacing: .01em;
+  }
+  .btn-primary:hover { background: #333; }
+  .btn-primary:active { transform: scale(.99); }
+  .btn-ghost {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--brand-muted);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .btn-ghost:hover { color: var(--brand-dark); }
+
+  /* ── MAP BAR ── */
+  .map-bar-wrap { margin-bottom: 1.5rem; }
+  .map-bar {
+    display: flex;
+    height: 36px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--brand-border-mid);
+  }
+  .map-seg {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    transition: all .2s;
+    border-right: 1px solid rgba(255,255,255,.4);
+  }
+  .map-seg:last-child { border-right: none; }
+  .map-seg.spike { background: var(--spike-bg); color: var(--spike-text); }
+  .map-seg.neutral { background: var(--neutral-bg); color: var(--neutral-text); }
+  .map-seg.recovery { background: var(--recovery-bg); color: var(--recovery-text); }
+  .map-seg.empty { background: #f0f0f0; color: #ccc; }
+  .map-labels { display: flex; justify-content: space-between; margin-top: 4px; }
+  .map-labels span { font-size: 11px; color: var(--brand-muted); }
+
+  /* ── SPIKE HIGHLIGHTS ── */
+  .highlight-box {
+    background: var(--spike-bg);
+    border: 1px solid var(--spike-border);
+    border-radius: var(--radius-md);
+    padding: .875rem 1.125rem;
+    margin-bottom: .75rem;
+  }
+  .hl-label { font-size: 11px; font-weight: 600; color: var(--spike-text); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .hl-text { font-size: 15px; font-weight: 500; color: var(--spike-text); }
+
+  /* ── SWAP CARDS ── */
+  .swap-card {
+    background: #fff;
+    border: 1px solid var(--brand-border-mid);
+    border-left: 3px solid var(--spike-border);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    padding: 1.25rem 1.25rem 1.125rem;
+    margin-bottom: 1rem;
+  }
+  .swap-number { font-size: 11px; font-weight: 600; color: var(--spike-text); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+  .swap-title { font-size: 16px; font-weight: 600; color: var(--brand-dark); margin-bottom: 8px; }
+  .swap-from {
+    font-size: 13px;
+    color: var(--spike-text);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .swap-to {
+    font-size: 13px;
+    color: var(--recovery-text);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .swap-why {
+    font-size: 13px;
+    color: var(--brand-mid);
+    line-height: 1.7;
+    border-top: 1px solid var(--brand-border);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+  .swap-why strong { font-weight: 600; color: var(--brand-dark); }
+
+  /* ── WHY IT MATTERS BOX ── */
+  .science-box {
+    background: #fff;
+    border: 1px solid var(--brand-border-mid);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .science-box h3 { font-size: 15px; font-weight: 600; margin-bottom: .5rem; }
+  .science-box p { font-size: 13px; color: var(--brand-mid); line-height: 1.75; }
+
+  /* ── CTA BOX ── */
+  .cta-box {
+    background: var(--purple-bg);
+    border: 1px solid var(--purple-border);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+  .cta-eyebrow { font-size: 11px; font-weight: 600; color: var(--purple-text); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+  .cta-title { font-size: 20px; font-weight: 600; color: var(--purple-text); margin-bottom: .5rem; line-height: 1.25; }
+  .cta-body { font-size: 14px; color: #534AB7; line-height: 1.65; margin-bottom: 1.25rem; }
+  .btn-cta {
+    display: inline-block;
+    padding: 12px 28px;
+    background: #3C3489;
+    color: #fff;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: background .15s;
+    letter-spacing: .01em;
+  }
+  .btn-cta:hover { background: #26215C; }
+  .cta-price { font-size: 12px; color: #534AB7; margin-top: 8px; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    background: #fff;
+    border: 1px solid var(--brand-border-mid);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--brand-muted);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 480px) {
+    .stepper .step-label { display: none; }
+    .time-row { grid-template-columns: 60px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="brand">Inflameless Living</div>
+  <h1>Morning Cortisol Mapping Canvas</h1>
+  <p class="subtitle">Find your top 2 spike moments before noon — and get one protocol swap for each.</p>
+</header>
+
+<div class="teach-banner">
+  <strong>Did you know?</strong> Unmanaged morning cortisol directly blocks fat metabolism, depletes energy availability, and suppresses immune regulation — undoing the work you do with food. This tool maps where it's happening in <em>your</em> morning.
+</div>
+
+<main class="wrapper">
+
+  <div class="stepper">
+    <div class="step-node">
+      <div class="step-circle active" id="s1">1</div>
+      <span class="step-label active" id="sl1">Map your morning</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-node">
+      <div class="step-circle" id="s2">2</div>
+      <span class="step-label" id="sl2">See your map</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-node">
+      <div class="step-circle" id="s3">3</div>
+      <span class="step-label" id="sl3">Get your swaps</span>
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div id="phase1">
+    <h2 class="section-title">What does your morning actually look like?</h2>
+    <p class="section-sub">Fill in what you do between waking and noon. You don't need every slot — just the ones that apply. The tool will auto-tag each activity, but you can override it.</p>
+    <div class="legend">
+      <span class="badge badge-spike"><i class="ti ti-flame"></i> cortisol spike</span>
+      <span class="badge badge-recovery"><i class="ti ti-leaf"></i> recovery</span>
+      <span class="badge badge-neutral"><i class="ti ti-minus"></i> neutral</span>
+    </div>
+    <div id="time-rows"></div>
+    <button class="btn-primary" onclick="goToPhase2()">See my cortisol map →</button>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div id="phase2" style="display:none">
+    <h2 class="section-title">Your morning cortisol map</h2>
+    <p class="section-sub">Here's a visual of your morning. The highlighted boxes below are your two highest-impact moments before noon.</p>
+    <div class="map-bar-wrap">
+      <div class="map-bar" id="map-bar"></div>
+      <div class="map-labels"><span>Wake</span><span>Noon</span></div>
+    </div>
+    <div id="spike-highlights"></div>
+    <button class="btn-primary" onclick="goToPhase3()">Show my protocol swaps →</button>
+    <button class="btn-ghost" onclick="goToPhase1()">← edit my routine</button>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div id="phase3" style="display:none">
+    <h2 class="section-title">Your 2 protocol swaps</h2>
+    <p class="section-sub">Based on your cortisol map, here are your two highest-leverage changes — each with the metabolic reason behind it.</p>
+    <div id="swap-cards"></div>
+
+    <div class="science-box">
+      <h3>Why this window matters</h3>
+      <p>Unmanaged morning cortisol acts as a direct brake on fat metabolism — it pushes your body toward glucose burning and away from fat oxidation, even if you're eating well. It also suppresses immune regulation, meaning inflammation you're managing through food can be undone in a two-hour morning window. The good news: two targeted swaps here can shift the entire metabolic tone of your day.</p>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-eyebrow">Ready to go deeper?</div>
+      <div class="cta-title">The Cortisol Code</div>
+      <div class="cta-body">Your two morning swaps are a start. The Cortisol Code maps your full cortisol rhythm — morning through evening — and gives you a 4-week protocol to reset it from the root. Available now in the Inflameless shop.</div>
+      <a class="btn-cta" href="https://inflameless.com/shop/cortisol-code" target="_blank">Get The Cortisol Code →</a>
+      <div class="cta-price">€27 · instant digital download</div>
+    </div>
+
+    <button class="btn-ghost" onclick="goToPhase1()">← start over</button>
+  </div>
+
+</main>
+
+<script>
+const SLOTS = [
+  {time:"On waking",    id:"wake"},
+  {time:"First 15 min", id:"f15"},
+  {time:"30 min",       id:"m30"},
+  {time:"1 hr",         id:"h1"},
+  {time:"1.5 hr",       id:"h1h"},
+  {time:"2 hr",         id:"h2"},
+  {time:"3 hr",         id:"h3"},
+  {time:"4 hr",         id:"h4"},
+  {time:"~Noon",        id:"noon"}
+];
+
+const PROTOCOL_DB = {
+  phone:{label:"Checking phone / social media",spike:true,swap:{to:"Sunlight exposure + 5 deep breaths before touching your phone",why:"Dopamine-seeking behaviour immediately after waking blunts the natural cortisol awakening response (CAR), paradoxically extending cortisol elevation into mid-morning. Light exposure anchors circadian timing and lets the CAR resolve cleanly by 9am."}},
+  alarm:{label:"Hitting snooze repeatedly",spike:true,swap:{to:"Single alarm — legs over the bed within 60 seconds",why:"Each snooze cycle re-triggers a partial sleep-wake stress response, spiking both cortisol and adenosine. One clean wake stabilises HPA axis output in the first hour."}},
+  coffee:{label:"Coffee / caffeine on an empty stomach",spike:true,swap:{to:"Delay caffeine 90 min after waking — eat protein first",why:"Caffeine amplifies cortisol output by 30–50% if taken during the natural cortisol peak window (6–9am for most people). Protein before caffeine blunts this amplification and stabilises blood glucose."}},
+  news:{label:"Reading or watching the news",spike:true,swap:{to:"Move news consumption to after 10am",why:"Threat-related media activates the amygdala within seconds of exposure, triggering a secondary cortisol release independent of your circadian rhythm. Morning news creates a guaranteed double cortisol spike — biological and psychological."}},
+  rush:{label:"Rushing / feeling pressed for time",spike:true,swap:{to:"Set your alarm 20 minutes earlier to build a buffer",why:"Anticipatory stress — the feeling of running late — is one of the strongest activators of epinephrine and cortisol. A 20-minute buffer converts a perceived threat into a neutral transition, and the HPA axis never fires."}},
+  skip:{label:"Skipping breakfast / fasting through morning",spike:true,swap:{to:"Eat 20–30g protein within 60–90 min of waking",why:"Fasting while cortisol is elevated sends a scarcity signal to the adrenals, sustaining high cortisol output. Protein — not carbs — is the most effective cortisol buffer at this time of day."}},
+  workout:{label:"High-intensity workout before eating",spike:true,swap:{to:"Move intense training to mid-morning, or eat protein beforehand",why:"Fasted high-intensity exercise in the cortisol peak window stacks two cortisol stimuli, creating cumulative HPA axis activation that can stay elevated until early afternoon and directly block fat metabolism."}},
+  light:{label:"Morning sunlight / outdoor walk",spike:false,swap:{to:"Keep this — anchor it at a consistent time each day",why:"Morning light entrains your cortisol rhythm to resolve on schedule, supports serotonin production, and anchors melatonin offset timing for better sleep that night. This is a recovery behaviour — protect it."}},
+  meditation:{label:"Meditation or breathing practice",spike:false,swap:{to:"This is already working for you",why:"Parasympathetic activation in the morning creates a counter-regulatory effect on cortisol. Even 5 minutes of diaphragmatic breathing measurably reduces cortisol area-under-curve in the first 2 hours of the day."}},
+  protein:{label:"Protein-rich breakfast",spike:false,swap:{to:"This is already working for you",why:"Morning protein stabilises blood glucose, signals cortisol to begin its natural decline, and provides the amino acid precursors for neurotransmitter synthesis. This is your most powerful morning cortisol buffer."}},
+  water:{label:"Drinking water on waking",spike:false,swap:{to:"This is already working for you",why:"Dehydration increases cortisol output. Rehydrating first thing supports adrenal function and helps the natural cortisol awakening response resolve cleanly."}},
+};
+
+const KEYWORD_MAP = {
+  phone:    ["phone","social","instagram","scroll","tiktok","twitter","x.com","email","messages","whatsapp","news feed","reels","facebook"],
+  alarm:    ["snooze","alarm","sleep in","fragmented","hit snooze"],
+  coffee:   ["coffee","caffeine","espresso","americano","cortado","latte","tea","matcha","energy drink","pre-workout"],
+  news:     ["news","tv","television","podcast","headlines","radio","newspaper"],
+  rush:     ["rush","late","hurry","stressed","running late","no time","panic","chaotic"],
+  skip:     ["skip","fast","no breakfast","intermittent","nothing","fasting","IF","keto fast","black coffee only"],
+  workout:  ["workout","gym","hiit","run","running","exercise","cardio","training","crossfit","weights","lifting","spin"],
+  light:    ["sun","sunlight","walk","outside","outdoor","garden","balcony","fresh air","morning walk","beach","park"],
+  meditation:["meditat","breath","yoga","stretch","mindful","calm","relax","journal","gratitude","pray","prayer"],
+  protein:  ["protein","eggs","meat","chicken","greek yogurt","cottage","salmon","protein shake","smoothie","omelette","turkey"],
+  water:    ["water","hydrate","hydration","glass of water","lemon water","sparkling water","drink"],
+};
+
+function classify(text) {
+  const t = text.toLowerCase();
+  for (const [key, words] of Object.entries(KEYWORD_MAP)) {
+    if (words.some(w => t.includes(w))) return key;
+  }
+  return null;
+}
+
+function renderRows() {
+  const container = document.getElementById("time-rows");
+  container.innerHTML = "";
+  SLOTS.forEach(sl => {
+    const div = document.createElement("div");
+    div.className = "time-row";
+    div.innerHTML = `
+      <span class="time-label">${sl.time}</span>
+      <div class="row-right">
+        <input class="activity-input" id="inp-${sl.id}" placeholder="what are you doing?" type="text" autocomplete="off" />
+        <div class="impact-sel" id="btns-${sl.id}">
+          <button class="impact-btn spike"    data-id="${sl.id}" data-val="spike"    onclick="setImpact('${sl.id}','spike',this)">🔥 spike</button>
+          <button class="impact-btn neutral"  data-id="${sl.id}" data-val="neutral"  onclick="setImpact('${sl.id}','neutral',this)">— neutral</button>
+          <button class="impact-btn recovery" data-id="${sl.id}" data-val="recovery" onclick="setImpact('${sl.id}','recovery',this)">🌿 recovery</button>
+        </div>
+        <div class="auto-tag" id="tag-${sl.id}"></div>
+      </div>`;
+    container.appendChild(div);
+    document.getElementById("inp-"+sl.id).addEventListener("input", () => autoClassify(sl.id));
+  });
+}
+
+function autoClassify(id) {
+  const val = document.getElementById("inp-"+id).value;
+  const key = classify(val);
+  if (!key) { document.getElementById("tag-"+id).textContent = ""; return; }
+  const isSpike = PROTOCOL_DB[key] && PROTOCOL_DB[key].spike;
+  const tag = isSpike ? "spike" : "recovery";
+  const btns = document.querySelectorAll(`[data-id="${id}"]`);
+  btns.forEach(b => { b.classList.remove("active"); if (b.dataset.val === tag) b.classList.add("active"); });
+  document.getElementById("tag-"+id).textContent = isSpike ? "auto-tagged as cortisol spike" : "auto-tagged as recovery";
+}
+
+function setImpact(id, val, el) {
+  const btns = document.querySelectorAll(`[data-id="${id}"]`);
+  btns.forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function getEntries() {
+  return SLOTS.map(sl => {
+    const txt = document.getElementById("inp-"+sl.id).value.trim();
+    const active = document.querySelector(`.impact-btn.active[data-id="${sl.id}"]`);
+    const impact = active ? active.dataset.val : "empty";
+    const key = classify(txt);
+    return { id:sl.id, time:sl.time, text:txt, impact, key };
+  }).filter(e => e.text);
+}
+
+function goToPhase2() {
+  const entries = getEntries();
+  if (entries.length === 0) { alert("Add at least one activity to map your morning."); return; }
+
+  document.getElementById("phase1").style.display = "none";
+  document.getElementById("phase2").style.display = "block";
+  setStep(2);
+
+  const bar = document.getElementById("map-bar");
+  bar.innerHTML = "";
+  entries.forEach(e => {
+    const seg = document.createElement("div");
+    seg.className = "map-seg " + (e.impact === "empty" ? "neutral" : e.impact);
+    seg.title = e.time + ": " + e.text;
+    seg.innerHTML = `<span>${e.time}</span>`;
+    bar.appendChild(seg);
+  });
+
+  const spikes = entries.filter(e => e.impact === "spike");
+  const hl = document.getElementById("spike-highlights");
+  hl.innerHTML = "";
+  if (spikes.length === 0) {
+    hl.innerHTML = `<div class="empty-state">No spike moments tagged yet. Either your morning is already well-optimised — or try tagging a few activities to see what the map reveals.</div>`;
+  } else {
+    spikes.slice(0,2).forEach((sp,i) => {
+      const d = document.createElement("div");
+      d.className = "highlight-box";
+      d.innerHTML = `<div class="hl-label">Spike moment ${i+1}</div><div class="hl-text">${sp.time} — ${sp.text}</div>`;
+      hl.appendChild(d);
+    });
+  }
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function goToPhase3() {
+  document.getElementById("phase2").style.display = "none";
+  document.getElementById("phase3").style.display = "block";
+  setStep(3);
+
+  const entries = getEntries();
+  const spikes = entries.filter(e => e.impact === "spike").slice(0,2);
+  const sc = document.getElementById("swap-cards");
+  sc.innerHTML = "";
+
+  if (spikes.length === 0) {
+    sc.innerHTML = `<div class="empty-state">No spike moments were identified. Go back and tag at least one activity as a spike to get your personalised swaps.</div>`;
+    return;
+  }
+
+  spikes.forEach((sp, i) => {
+    const proto = sp.key && PROTOCOL_DB[sp.key] ? PROTOCOL_DB[sp.key] : null;
+    const card = document.createElement("div");
+    card.className = "swap-card";
+    if (proto && proto.spike) {
+      card.innerHTML = `
+        <div class="swap-number">Swap ${i+1}</div>
+        <div class="swap-title">${sp.time}: ${sp.text}</div>
+        <div class="swap-from"><i class="ti ti-x" style="flex-shrink:0;margin-top:1px"></i><span>Current: ${proto.label}</span></div>
+        <div class="swap-to"><i class="ti ti-check" style="flex-shrink:0;margin-top:1px"></i><span>Swap to: ${proto.swap.to}</span></div>
+        <div class="swap-why"><strong>Why it works:</strong> ${proto.swap.why}</div>`;
+    } else {
+      card.innerHTML = `
+        <div class="swap-number">Spike moment ${i+1}</div>
+        <div class="swap-title">${sp.time}: ${sp.text}</div>
+        <div class="swap-why" style="border-top:none;padding-top:0">This activity is tagged as a cortisol spike. Try moving it later in the morning, shortening its duration, or adding a recovery buffer directly before or after it — 5 minutes of slow breathing, a protein snack, or sunlight exposure.</div>`;
+    }
+    sc.appendChild(card);
+  });
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function goToPhase1() {
+  document.getElementById("phase2").style.display = "none";
+  document.getElementById("phase3").style.display = "none";
+  document.getElementById("phase1").style.display = "block";
+  setStep(1);
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const c = document.getElementById("s"+i);
+    const l = document.getElementById("sl"+i);
+    c.className = "step-circle" + (i < n ? " done" : i === n ? " active" : "");
+    if (l) l.className = "step-label" + (i < n ? " done" : i === n ? " active" : "");
+  });
+}
+
+renderRows();
+</script>
+</body>
+</html>
